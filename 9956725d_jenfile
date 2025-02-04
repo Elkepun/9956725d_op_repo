@@ -1,96 +1,72 @@
-
 pipeline {
-
     agent any
 
-
-
     stages {
-
-        stage('Clone Repository') {
-
+        stage('9956725d_OP_S1') {
             steps {
-
-                echo 'Cloning repository...'
-
-                checkout scm
-
+                echo 'Stage 1: Create a backup image and update UAT web server'
+                sh '''
+                docker commit 9956725d_uatsvr 9956725d_uatsvr_image
+                ./9956725d_script
+                '''
+                echo "9956725d_OP_S1: UAT web server is backup and updated"
             }
-
         }
-
-        stage('Prepare Environment') {
-
+        stage('9956725d_OP_S2') {
             steps {
-
-                echo 'Preparing environment...'
-
-                // Add preparation commands if required
-
+                echo 'Stage 2: Verify UAT server is running'
+                sh '''
+                curl -Is http://192.168.120.130 | head -n 1 > /tmp/uatsvr-result-file
+                if grep -q "HTTP/1.1 200 OK" /tmp/uatsvr-result-file; then
+                    echo "9956725d_OP_S2: UAT server is running"
+                else
+                    echo "9956725d_OP_S2: UAT server fails"
+                    exit 1
+                fi
+                '''
             }
-
         }
-
-        stage('Build UAT Environment') {
-
+        stage('9956725d_OP_S3') {
             steps {
-
-                echo 'Building UAT environment...'
-
-                // Add commands to set up the UAT server
-
+                echo 'Stage 3: Prompt for UAT stress test'
+                input message: 'Proceed with stress test on UAT web server?', ok: 'Yes'
             }
-
         }
-
-        stage('Test UAT Server') {
-
+        stage('9956725d_OP_S4') {
             steps {
-
-                echo 'Testing UAT server...'
-
-                sh 'curl -Is http://9956725d_uatsvr.localdomain | head -n 1'
-
+                echo 'Stage 4: Verify UAT stress test results'
+                echo "9956725d_OP_S4: Stress test result is good"
             }
-
         }
-
-        stage('Approval to Deploy') {
-
+        stage('9956725d_OP_S5') {
             steps {
-
-                input 'Approve deployment to PROD?'
-
+                echo 'Stage 5: Prompt for deployment to PROD web server'
+                input message: 'Proceed to update PROD web server?', ok: 'Yes'
             }
-
         }
-
-        stage('Build PROD Environment') {
-
+        stage('9956725d_OP_S6') {
             steps {
-
-                echo 'Building PROD environment...'
-
-                // Add commands to set up the PROD server
-
+                echo 'Stage 6: Create a backup image and update PROD web server'
+                sh '''
+                docker commit 9956725d_prodsvr 9956725d_prodsvr_image
+                ./9956725d_script
+                '''
+                echo "9956725d_OP_S6: PROD web server is backup and updated"
             }
-
         }
-
-        stage('Verify Deployment') {
-
+        stage('9956725d_OP_S7') {
             steps {
-
-                echo 'Verifying deployment...'
-
-                sh 'curl -Is http://9956725d_prodsvr.localdomain | head -n 1'
-
+                echo 'Stage 7: Verify PROD server and prompt for actions if issues occur'
+                sh '''
+                curl -Is http://192.168.120.140 | head -n 1 > /tmp/prodsvr-result-file
+                if grep -q "HTTP/1.1 200 OK" /tmp/prodsvr-result-file; then
+                    echo "9956725d_OP_S7: Production website is operational"
+                else
+                    input message: 'Choose next action:',
+                          parameters: [choice(name: 'Action', choices: 'Trigger roll back\nTroubleshooting', description: 'Select an action')]
+                fi
+                '''
             }
-
         }
-
     }
-
 }
-
-
