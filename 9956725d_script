@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Install Apache2
+
+puppet resource package apache2 ensure=installed
+
+
+
+# Ensure Apache2 service is running
+
+puppet resource service apache2 ensure=running enable=true
+
+
+
+# Clean and recreate directory
+
+puppet resource file /tmp/9956725d/research ensure=absent
+
+puppet resource file /tmp/9956725d/research ensure=directory
+
+
+
+# Clone repository
+
+git clone https://github.com/Elkepun/9956725d_op_repo.git /tmp/9956725d/research
+
+
+
+# Replace index.html
+
+cp /tmp/9956725d/research/9956725d_index.html /var/www/html/index.html
+
+
