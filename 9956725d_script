@@ -22,21 +22,9 @@ service { 'apache2':
 
 
 
-# Ensure /tmp/9956725d/research is clean and recreated
+# Ensure /tmp/9956725d exists
 
-file { '/tmp/9956725d/research':
-
-  ensure  => absent,
-
-  recurse => true,
-
-  force   => true,
-
-}
-
-
-
-file { '/tmp/9956725d/research':
+file { '/tmp/9956725d':
 
   ensure => directory,
 
@@ -44,7 +32,23 @@ file { '/tmp/9956725d/research':
 
 
 
-# Clone the repo into /tmp/9956725d/research
+# Ensure /tmp/9956725d/research is cleaned and recreated
+
+file { '/tmp/9956725d/research':
+
+  ensure  => directory,
+
+  recurse => true,
+
+  force   => true,
+
+  require => File['/tmp/9956725d'],
+
+}
+
+
+
+# Clone the GitHub repo into /tmp/9956725d/research
 
 exec { 'clone_repo':
 
@@ -58,7 +62,7 @@ exec { 'clone_repo':
 
 
 
-# Copy the index.html to /var/www/html
+# Copy index.html to /var/www/html/index.html
 
 file { '/var/www/html/index.html':
 
