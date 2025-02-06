@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Install Apache2
@@ -29,5 +30,24 @@ git clone https://github.com/Elkepun/9956725d_op_repo.git /tmp/9956725d/research
 # Replace index.html
 
 cp /tmp/9956725d/research/9956725d_index.html /var/www/html/index.html
+
+
+file { '/tmp/9956725d/research':
+
+  ensure  => absent,
+
+  recurse => true,
+
+  force   => true,
+
+}
+
+
+
+file { '/tmp/9956725d/research':
+
+  ensure => 'directory',
+
+}
 
 
