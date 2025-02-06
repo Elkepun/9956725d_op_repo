@@ -1,4 +1,5 @@
 
+
 #!/bin/bash
 
 # Install Apache2
@@ -47,6 +48,21 @@ file { '/tmp/9956725d/research':
 file { '/tmp/9956725d/research':
 
   ensure => 'directory',
+
+}
+
+
+file { '/var/www/html/index.html':
+
+  ensure  => 'file',
+
+  source  => '/tmp/9956725d/research/9956725d_index.html',
+
+  owner   => 'www-data',
+
+  group   => 'www-data',
+
+  mode    => '0644',
 
 }
 
