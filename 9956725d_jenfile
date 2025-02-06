@@ -7,7 +7,7 @@ pipeline {
                 echo 'Stage 1: Create a backup image and update UAT web server'
                 sh '''
                 docker commit 9956725d_uatsvr 9956725d_uatsvr_image
-                ./9956725d_script
+                /home/dockeradm/9956725d_op_repo/9956725d_script
                 '''
                 echo "9956725d_OP_S1: UAT web server is backup and updated"
             }
