@@ -1,5 +1,3 @@
-# Ensure apache2 is installed and running
-
 package { 'apache2':
 
   ensure   => 'installed',
@@ -16,45 +14,25 @@ service { 'apache2':
 
   enable   => true,
 
-  require  => Package['apache2'],
-
 }
 
 
-
-# Ensure /tmp/9956725d exists
-
-file { '/tmp/9956725d':
-
-  ensure => directory,
-
-}
-
-
-
-# Ensure /tmp/9956725d/research is cleaned and recreated
 
 file { '/tmp/9956725d/research':
 
-  ensure  => directory,
+  ensure  => 'directory',
 
   recurse => true,
 
   force   => true,
 
-  require => File['/tmp/9956725d'],
-
 }
 
 
 
-# Clone the GitHub repo into /tmp/9956725d/research
-
 exec { 'clone_repo':
 
-  command => '/usr/bin/git clone https://github.com/Elkepun/9956725d_op_repo.git /tmp/9956725d/research',
-
-  creates => '/tmp/9956725d/research/.git',
+  command => '/usr/bin/git clone https://github.com/your_account/your_repo /tmp/9956725d/research',
 
   require => File['/tmp/9956725d/research'],
 
@@ -62,21 +40,13 @@ exec { 'clone_repo':
 
 
 
-# Copy index.html to /var/www/html/index.html
-
 file { '/var/www/html/index.html':
 
-  ensure  => file,
+  ensure  => 'present',
 
   source  => '/tmp/9956725d/research/9956725d_index.html',
 
-  owner   => 'www-data',
-
-  group   => 'www-data',
-
-  mode    => '0644',
-
-  require => [Package['apache2'], File['/tmp/9956725d/research']],
+  require => Exec['clone_repo'],
 
 }
 
