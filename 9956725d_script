@@ -1,37 +1,28 @@
+# Ensure apache2 is installed and running
 
+package { 'apache2':
 
-#!/bin/bash
+  ensure   => 'installed',
 
-# Install Apache2
+  provider => 'apt',
 
-puppet resource package apache2 ensure=installed
-
-
-
-# Ensure Apache2 service is running
-
-puppet resource service apache2 ensure=running enable=true
+}
 
 
 
-# Clean and recreate directory
+service { 'apache2':
 
-puppet resource file /tmp/9956725d/research ensure=absent
+  ensure   => 'running',
 
-puppet resource file /tmp/9956725d/research ensure=directory
+  enable   => true,
 
+  require  => Package['apache2'],
 
-
-# Clone repository
-
-git clone https://github.com/Elkepun/9956725d_op_repo.git /tmp/9956725d/research
+}
 
 
 
-# Replace index.html
-
-cp /tmp/9956725d/research/9956725d_index.html /var/www/html/index.html
-
+# Ensure /tmp/9956725d/research is clean and recreated
 
 file { '/tmp/9956725d/research':
 
@@ -47,14 +38,31 @@ file { '/tmp/9956725d/research':
 
 file { '/tmp/9956725d/research':
 
-  ensure => 'directory',
+  ensure => directory,
 
 }
 
 
+
+# Clone the repo into /tmp/9956725d/research
+
+exec { 'clone_repo':
+
+  command => '/usr/bin/git clone https://github.com/Elkepun/9956725d_op_repo.git /tmp/9956725d/research',
+
+  creates => '/tmp/9956725d/research/.git',
+
+  require => File['/tmp/9956725d/research'],
+
+}
+
+
+
+# Copy the index.html to /var/www/html
+
 file { '/var/www/html/index.html':
 
-  ensure  => 'file',
+  ensure  => file,
 
   source  => '/tmp/9956725d/research/9956725d_index.html',
 
@@ -63,6 +71,8 @@ file { '/var/www/html/index.html':
   group   => 'www-data',
 
   mode    => '0644',
+
+  require => [Package['apache2'], File['/tmp/9956725d/research']],
 
 }
 
