@@ -32,7 +32,7 @@ file { '/tmp/9956725d/research':
 
 exec { 'clone_repo':
 
-  command => '/usr/bin/git clone https://github.com/your_account/your_repo /tmp/9956725d/research',
+  command => '/usr/bin/git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',
 
   require => File['/tmp/9956725d/research'],
 
