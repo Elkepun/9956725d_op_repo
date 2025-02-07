@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage('9956725d_OP_S1') {
+       stage('Backup and Update UAT Web Server') {
             steps {
-                echo 'Stage 1: Create a backup image and update UAT web server'
+                echo 'Backing up and updating UAT web server...'
                 sh '''
                 docker commit 9956725d_uatsvr 9956725d_uatsvr_image
+                docker cp ./9956725d_script 9956725d_uatsvr:/tmp/9956725d_script
                 /opt/puppetlabs/bin/puppet apply /tmp/9956725d_script
                 '''
-                echo "9956725d_OP_S1: UAT web server is backup and updated"
             }
         }
         stage('9956725d_OP_S2') {
