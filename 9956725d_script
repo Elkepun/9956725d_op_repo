@@ -4,22 +4,17 @@ package { 'apache2':
 }
 
 service { 'apache2':
-  ensure    => 'running',
-  enable    => 'true',
-  provider  => 'systemd',
+  ensure   => 'running',
+  enable   => 'true',
+  provider => 'systemd',
 }
 
 file { '/tmp/9956725d/research':
-  ensure   => 'absent',
+  ensure => 'absent',
   provider => 'posix',
 }
 
 exec { 'clone_repo':
   command => 'git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',
   unless  => 'test -d /tmp/9956725d/research',
-}
-
-file { '/var/www/html/index.html':
-  ensure  => 'file',
-  source  => '/tmp/9956725d/research/9956725d_index.html',
 }
