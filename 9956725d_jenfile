@@ -12,9 +12,6 @@ pipeline {
                     // Copy script file into the container (if needed)
                     sh 'docker cp ./9956725d_script 9956725d_uatsvr:/tmp/9956725d_script'
 
-                    // Ensure puppet is installed and then apply the puppet script
-                    sh 'docker exec 9956725d_uatsvr apt update -y && apt install -y puppet'
-
                     // Run the Puppet script inside the container using puppet apply
                     sh 'docker exec 9956725d_uatsvr puppet apply /tmp/9956725d_script'
                 }
