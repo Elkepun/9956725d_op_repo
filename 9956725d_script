@@ -33,5 +33,4 @@ exec { 'clone_repo':
 file { '/var/www/html/index.html':
   ensure  => 'file',
   source  => 'file:///tmp/9956725d/research/9956725d_index.html',
-  provider => 'file',
 }
