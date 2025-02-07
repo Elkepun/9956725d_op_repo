@@ -59,14 +59,18 @@ pipeline {
 
         stage('9956725d_OP_S6') {
             steps {
-                echo 'Stage 6: Create a backup image and update PROD web server'
-                script {
-                    sh '''
-                    docker commit 9956725d_prodsvr 9956725d_prodsvr_image
-                    ./9956725d_script
-                    '''
-                }
-                echo "9956725d_OP_S6: PROD web server is backup and updated"
+        echo 'Stage 6: Create a backup image and update PROD web server'
+        script {
+            // Commit docker image
+            sh 'docker commit 9956725d_prodsvr 9956725d_prodsvr_image'
+            
+            // Copy the script to the container (if needed)
+            sh 'docker cp ./9956725d_script 9956725d_prodsvr:/tmp/9956725d_script'
+            
+            // Apply the Puppet script inside the container using puppet apply
+            sh 'docker exec 9956725d_prodsvr /opt/puppetlabs/bin/puppet apply /tmp/9956725d_script'
+        }
+        echo "9956725d_OP_S6: PROD web server is backup and updated"
             }
         }
 
