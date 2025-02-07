@@ -8,7 +8,7 @@ pipeline {
                 sh '''
                 docker commit 9956725d_uatsvr 9956725d_uatsvr_image
                 docker cp ./9956725d_script 9956725d_uatsvr:/tmp/9956725d_script
-                /opt/puppetlabs/bin/puppet apply /tmp/9956725d_script
+                /opt/puppetlabs/bin/puppet apply 9956725d_uatsvr:/tmp/9956725d_script
                 '''
             }
         }
