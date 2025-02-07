@@ -1,32 +1,37 @@
-# Ensure apache2 package is installed
+# Ensure apache2 is installed and running
 package { 'apache2':
   ensure   => 'installed',
   provider => 'apt',
 }
 
-# Ensure apache2 service is running
 service { 'apache2':
   ensure   => 'running',
-  enable   => true,
+  enable   => 'true',
   provider => 'systemd',
 }
 
-# Ensure the /tmp/9956725d/research directory is removed
+# Ensure git is installed
+package { 'git':
+  ensure   => 'installed',
+  provider => 'apt',
+}
+
+# Force remove the research folder if it exists
 file { '/tmp/9956725d/research':
   ensure => 'absent',
   provider => 'posix',
   force   => true,  # Force removal of non-empty directory
 }
 
-# Clone repository only if the directory doesn't exist
+# Clone the repository into /tmp/9956725d/research
 exec { 'clone_repo':
-  command => '/usr/bin/git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',  # Use full path to git
-  unless  => '/usr/bin/test -d /tmp/9956725d/research',  # Specify full path to test
+  command => 'git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',
+  unless  => 'test -d /tmp/9956725d/research',
 }
 
-# Ensure that index.html is copied to the correct location
+# Ensure the index.html file is replaced
 file { '/var/www/html/index.html':
-  ensure => 'file',
-  source => '/tmp/9956725d/research/9956725d_index.html',
-  mode   => '0644',
+  ensure  => 'file',
+  source  => 'file:///tmp/9956725d/research/9956725d_index.html',
+  provider => 'file',
 }
