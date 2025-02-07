@@ -75,19 +75,18 @@ pipeline {
         }
 
         stage('9956725d_OP_S7') {
-            steps {
-                echo 'Stage 7: Verify PROD server and prompt for actions if issues occur'
-                script {
-                    sh '''
-                    curl -Is http://192.168.120.140 | head -n 1 > /tmp/prodsvr-result-file
-                    if grep -q "HTTP/1.1 200 OK" /tmp/prodsvr-result-file; then
-                        echo "9956725d_OP_S7: Production website is operational"
-                    else
-                        input message: 'Choose next action:',
-                              parameters: [choice(name: 'Action', choices: ['Trigger roll back', 'Troubleshooting'], description: 'Select an action')]
-                    fi
-                    '''
-                }
+             steps {
+        echo 'Stage 7: Verify PROD server and prompt for actions if issues occur'
+        sh '''
+        curl -Is http://192.168.120.140 | head -n 1 | grep -q "HTTP/1.1 200 OK"
+        if [ $? -eq 0 ]; then
+            echo "9956725d_OP_S7: Production website is operational"
+        else
+            echo "9956725d_OP_S7: Production website is down"
+            exit 1
+        fi
+        '''
+    }
             }
         }
     }
