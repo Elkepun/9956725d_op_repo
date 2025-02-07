@@ -1,20 +1,31 @@
+# Ensure apache2 package is installed
 package { 'apache2':
   ensure   => 'installed',
   provider => 'apt',
 }
 
+# Ensure apache2 service is running
 service { 'apache2':
   ensure   => 'running',
-  enable   => 'true',
+  enable   => true,
   provider => 'systemd',
 }
 
+# Ensure the /tmp/9956725d/research directory is removed
 file { '/tmp/9956725d/research':
   ensure => 'absent',
   provider => 'posix',
 }
 
+# Clone repository only if the directory doesn't exist
 exec { 'clone_repo':
   command => 'git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',
   unless  => 'test -d /tmp/9956725d/research',
+}
+
+# Ensure that index.html is copied to the correct location
+file { '/var/www/html/index.html':
+  ensure => 'file',
+  source => '/tmp/9956725d/research/9956725d_index.html',
+  mode   => '0644',
 }
