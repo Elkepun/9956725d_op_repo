@@ -15,6 +15,7 @@ service { 'apache2':
 file { '/tmp/9956725d/research':
   ensure => 'absent',
   provider => 'posix',
+  force   => true,  # Force removal of non-empty directory
 }
 
 # Clone repository only if the directory doesn't exist
