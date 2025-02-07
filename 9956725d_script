@@ -20,7 +20,7 @@ file { '/tmp/9956725d/research':
 # Clone repository only if the directory doesn't exist
 exec { 'clone_repo':
   command => 'git clone https://github.com/Elkepun/9956725d_op_repo /tmp/9956725d/research',
-  unless  => 'test -d /tmp/9956725d/research',
+  unless  => '/usr/bin/test -d /tmp/9956725d/research',  # Specify full path to test
 }
 
 # Ensure that index.html is copied to the correct location
